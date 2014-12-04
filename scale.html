@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>scale</title>
+    <link rel="stylesheet" href="styles/reset.css"/>
+    <style>
+        span {
+            margin-left: 20px;
+        }
+    </style>
+
+</head>
+<body>
+<div id="d1"></div>
+<script src="scripts/d3.js"></script>
+<script>
+
+    var data = [1, 4, 6, 8, 12];
+    var liner = d3.scale.linear().domain([1, 12]).rangeRound([1, 10]);
+    d3.select("body").selectAll("span").data(data).enter().append("span");
+    d3.select("body").selectAll("span").data(data).text(function (d) {
+        return liner(d);
+    });
+    var s=d3.scale.category20();
+
+    d3.select("#d1").html(s(1)).style("background-color", s(1)).transition().duration(5000).style("background-color", "red");
+//    setInterval((function(){
+//        var i=1;
+//        return function() {
+//            i++;
+//            d3.select("#d1").html(s(i)).style("background-color", s(i));
+//        }
+//    })(),2000);
+   var o2= d3.scale.ordinal().domain([1, 2, 3, 4]).rangeRoundBands([0, 100], 0.1);
+    console.log( o2.range());
+    console.log( o2.rangeBand());
+</script>
+</body>
+</html>

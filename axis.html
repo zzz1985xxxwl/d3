@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>axis</title>
+    <link rel="stylesheet" href="styles/reset.css"/>
+    <style>
+        .bar {
+            fill: steelblue;
+        }
+
+        .bar:hover {
+            fill: brown;
+        }
+
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .axis .grid-line {
+            stroke: #bcbcbc;
+        }
+    </style>
+</head>
+<body>
+<div id="d1">
+    <button id="rescale" onclick="rescale()">ReScale</button>
+</div>
+<script src="scripts/d3.js"></script>
+<script>
+    var margin = {top: 20, right: 20, bottom: 30, left: 40},
+            svgAttr = {width: 960, height: 500},
+            width = svgAttr.width - margin.left - margin.right,
+            height = svgAttr.height - margin.top - margin.bottom;
+    var svg = createSVG("d1");
+
+    var xAxis = d3.svg.axis()
+            .scale(d3.scale.linear().domain([0, 100]).range([height, 0]))
+            .orient("left")
+            .ticks(5);
+
+    renderYAris(xAxis);
+
+    renderXAris(d3.scale.linear().domain([0, 1]).range([0, width]), 5);
+
+    function rescale() {
+        xAxis.scale().domain([0, 200]);
+        svg.select("g.y-axis").transition().call(xAxis);
+        renderYArisGridLine();
+    }
+
+    function renderYAris(axis) {
+        svg.append("g").classed("y-axis", true).call(axis);
+        renderYArisGridLine();
+    }
+
+    function renderYArisGridLine() {
+        var ticks = d3.selectAll("g.y-axis g.tick");
+        ticks.select("line.grid-line").remove();
+        ticks.filter(":not(:first-child)").append("line").classed("grid-line", true)
+                .attr("x1", 0).attr("y1", 0).attr("x2", width).attr("y2", 0);
+    }
+
+    function renderXAris(scale, ticks) {
+        svg.append("g").attr("transform", translate(0, height))
+                .call(d3.svg.axis().scale(scale)
+                        .orient("bottom")
+                        .ticks(ticks,"%")
+                       ).selectAll("g.tick:not(:first-child)").append("line").classed("grid-line", true)
+                .attr("x1", 0).attr("y1", 0).attr("x2", 0).attr("y2", -height);
+    }
+
+    function createSVG(divID) {
+        return d3.select("#" + divID).append("svg").attr("class", "axis").attr("width", svgAttr.width)
+                .attr("height", svgAttr.height)
+                .append("g").attr("transform", translate(margin.left, margin.top));
+    }
+
+    function translate(x, y) {
+        return "translate(" + x + "," + y + ")";
+    }
+
+</script>
+</body>
+</html>
